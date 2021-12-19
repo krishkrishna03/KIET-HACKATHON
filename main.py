@@ -1,34 +1,94 @@
-from tkinter import *
-from tkinter import messagebox
-import smtplib
+
 import random
+import pyperclip
+from tkinter import *
+from tkinter.ttk import *
+
+
+def low():
+	entry.delete(0, END)
+
+	length = var1.get()
+
+	lower = "abcdefghijklmnopqrstuvwxyz"
+	upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+	digits = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 !@#$%^&*()"
+	password = ""
+
+
+	if var.get() == 1:
+		for i in range(0, length):
+			password = password + random.choice(lower)
+		return password
+
+
+	elif var.get() == 0:
+		for i in range(0, length):
+			password = password + random.choice(upper)
+		return password
+
+
+	elif var.get() == 3:
+		for i in range(0, length):
+			password = password + random.choice(digits)
+		return password
+	else:
+		print("Please choose an option")
+
+
+
+def generate():
+	password1 = low()
+	entry.insert(10, password1)
+
+
+
+def copy1():
+	random_password = entry.get()
+	pyperclip.copy(random_password)
+
+
 
 root = Tk()
-root.title("Send OTP Via Email")
-root.geometry("565x250")
-email_label = Label(root, text="Enter receiver's Email: ", font=("ariel 15 bold"), relief=FLAT)
-email_label.grid(row=0, column=0, padx=15, pady=60)
-email_entry = Entry(root, font=("ariel 15 bold"), width=25, relief=GROOVE, bd=2)
-email_entry.grid(row=0, column=1, padx=12, pady=60)
-email_entry.focus()
+var = IntVar()
+var1 = IntVar()
 
 
-def send():
-    try:
-        s = smtplib.SMTP("smtp.gmail.com", 587)  # 587 is a port number
-        s.starttls()
-        s.login("sender_email", "sender_email_password")
-        otp = random.randint(1000, 9999)
-        otp = str(otp)
-        s.sendmail("sender_email", email_entry.get(), otp)
-        messagebox.showinfo("Send OTP via Email", f"OTP sent to {email_entry.get()}")
-        s.quit()
-
-    except:
-        messagebox.showinfo("Send OTP via Email",
-                            "Please enter the valid email address OR check an internet connection")
+root.title("Random Password Generator")
 
 
-send_button = Button(root, text="Send Email", font=("ariel 15 bold"), bg="black", fg="green2", bd=3, command=send)
-send_button.place(x=210, y=150)
+Random_password = Label(root, text="Password")
+Random_password.grid(row=0)
+entry = Entry(root)
+entry.grid(row=0, column=1)
+
+
+c_label = Label(root, text="Length")
+c_label.grid(row=1)
+
+
+copy_button = Button(root, text="Copy", command=copy1)
+copy_button.grid(row=0, column=2)
+generate_button = Button(root, text="Generate", command=generate)
+generate_button.grid(row=0, column=3)
+
+
+radio_low = Radiobutton(root, text="Low", variable=var, value=1)
+radio_low.grid(row=1, column=2, sticky='E')
+radio_middle = Radiobutton(root, text="Medium", variable=var, value=0)
+radio_middle.grid(row=1, column=3, sticky='E')
+radio_strong = Radiobutton(root, text="Strong", variable=var, value=3)
+radio_strong.grid(row=1, column=4, sticky='E')
+combo = Combobox(root, textvariable=var1)
+
+
+combo['values'] = (8, 9, 10, 11, 12, 13, 14, 15, 16,
+				17, 18, 19, 20, 21, 22, 23, 24, 25,
+				26, 27, 28, 29, 30, 31, 32, "Length")
+combo.current(0)
+combo.bind('<<ComboboxSelected>>')
+combo.grid(column=1, row=1)
+
+
 root.mainloop()
+
